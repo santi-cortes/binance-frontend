@@ -15,12 +15,19 @@ export const CryptoDetail = () => {
   const candleSeriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
 
   useEffect(() => {
-    if (symbol) {
-      fetchCryptoBySymbol(symbol)
-        .then(setData)
-        .catch((err) => setError(err.message))
-        .finally(() => setLoading(false));
-    }
+    const loadData = async () => {
+      try {
+        const cryptoData = await fetchCryptoBySymbol("btc");
+        setData(cryptoData);
+      } catch (err: any) {
+        console.error(err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
   }, [symbol]);
 
   useEffect(() => {

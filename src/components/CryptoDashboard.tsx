@@ -16,14 +16,24 @@ export const CryptoDashboard = () => {
   const candleSeriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
 
   useEffect(() => {
-    fetchCryptoBySymbol("btc")
-      .then((data) => setBtcData(data))
-      .catch((err) => console.error(err));
+    const loadData = async () => {
+      try {
+        const [btc, list] = await Promise.all([
+          fetchCryptoBySymbol("btc"),
+          fetchCryptos(),
+        ]);
 
-    fetchCryptos()
-      .then((data) => setCryptos(data))
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
+        setBtcData(btc);
+        setCryptos(list);
+      } catch (err: any) {
+        console.error(err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
   }, []);
 
   useEffect(() => {
