@@ -1,82 +1,27 @@
-import { useState } from "react";
+import { useForm } from "react-hook-form";
 import type { FormValues } from "../types";
 
 export const Formulario = () => {
-  const [values, setValues] = useState<FormValues>({
-    name: "",
-    email: "",
-    comment: "",
-    age: "",
-    city: "",
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid, isSubmitSuccessful },
+    reset,
+  } = useForm<FormValues>({
+    mode: "onBlur",
+    defaultValues: {
+      name: "",
+      email: "",
+      age: "",
+      city: "",
+      comment: "",
+    },
   });
 
-  const [errors, setErrors] = useState<{ [k: string]: string }>({});
-  const [submitted, setSubmitted] = useState(false);
-
-  const initialValues: FormValues = {
-    name: "",
-    email: "",
-    age: "",
-    city: "",
-    comment: "",
+  const onSubmit = (data: FormValues) => {
+    console.log("Formulario enviado:", data);
+    reset();
   };
-
-  const validateField = (name: string, value: string) => {
-    let error = "";
-
-    if (name === "name" && !value) error = "Nombre obligatorio";
-
-    if (name === "email") {
-      if (!value) error = "Email obligatorio";
-      else if (!/\S+@\S+\.\S+/.test(value)) error = "Email inválido";
-    }
-
-    if (name === "comment" && !value) error = "Comentario obligatorio";
-    if (name === "age" && !value) error = "Edad obligatoria";
-    if (name === "city" && !value) error = "Ciudad obligatoria";
-
-    setErrors((prev) => ({ ...prev, [name]: error }));
-  };
-
-  const validateAll = () => {
-    const newErrors: { [k: string]: string } = {};
-
-    Object.entries(values).forEach(([key, value]) => {
-      validateField(key, value);
-      if (!value) newErrors[key] = "Campo obligatorio";
-    });
-
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const resetForm = () => {
-    setValues(initialValues);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (validateAll()) {
-      setSubmitted(true);
-      resetForm();
-    }
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setValues({ ...values, [e.target.name]: e.target.value });
-    setSubmitted(false);
-  };
-
-  const handleBlur = (
-    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    validateField(e.target.name, e.target.value);
-  };
-
-  const hasErrors =
-    Object.values(errors).some((e) => e) ||
-    Object.values(values).some((v) => !v);
 
   const fields: { label: string; name: keyof FormValues; type: string }[] = [
     { label: "Nombre", name: "name", type: "text" },
@@ -91,70 +36,95 @@ export const Formulario = () => {
         Formulario de prueba
       </h2>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {fields.map(({ label, name, type }) => (
-          <div key={name} className="flex flex-col">
-            <label className="text-gray-700 mb-1 font-medium">{label}</label>
-            <input
-              type={type}
-              name={name}
-              value={values[name]}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              className={`px-4 py-3 rounded-xl border 
-                ${
-                  errors[name]
-                    ? "border-red-400 focus:ring-red-500 focus:border-red-500"
-                    : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                }
-                outline-none shadow-sm`}
-            />
-            {errors[name] && (
-              <span className="text-red-600 text-sm mt-1">{errors[name]}</span>
-            )}
-          </div>
-        ))}
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        {fields.map(({ label, name, type }) => {
+          const error = errors[name]?.message;
+
+          return (
+            <div key={name} className="flex flex-col">
+              <label className="text-gray-700 mb-1 font-medium">{label}</label>
+
+              <input
+                type={type}
+                {...register(name, {
+                  required: `${label} obligatorio`,
+                  ...(name === "email" && {
+                    pattern: {
+                      value: /\S+@\S+\.\S+/,
+                      message: "Email inválido",
+                    },
+                  }),
+                })}
+                className={`px-4 py-3 rounded-xl border outline-none shadow-sm
+              ${
+                error
+                  ? "border-red-400 focus:ring-red-500 focus:border-red-500"
+                  : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+              }`}
+              />
+
+              {error && (
+                <span className="text-red-600 text-sm mt-1">{error}</span>
+              )}
+            </div>
+          );
+        })}
 
         <div className="flex flex-col">
           <label className="text-gray-700 mb-1 font-medium">Comentario</label>
+
           <textarea
-            name="comment"
             rows={3}
-            value={values.comment}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            className={`px-4 py-3 rounded-xl border resize-none 
-              ${
-                errors.comment
-                  ? "border-red-400 focus:ring-red-500 focus:border-red-500"
-                  : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-              }
-              outline-none shadow-sm`}
+            {...register("comment", { required: "Comentario obligatorio" })}
+            className={`px-4 py-3 rounded-xl border resize-none outline-none shadow-sm
+          ${
+            errors.comment
+              ? "border-red-400 focus:ring-red-500 focus:border-red-500"
+              : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+          }`}
           />
+
           {errors.comment && (
-            <span className="text-red-600 text-sm mt-1">{errors.comment}</span>
+            <span className="text-red-600 text-sm mt-1">
+              {errors.comment.message}
+            </span>
           )}
         </div>
 
         <button
           type="submit"
-          disabled={hasErrors}
-          className={`
-            w-full mt-4 py-3 rounded-xl font-semibold shadow-lg transition
-            ${
-              hasErrors
-                ? "bg-gray-400 cursor-not-allowed opacity-60"
-                : "bg-blue-600 hover:bg-blue-700 text-white"
-            }
-          `}
+          disabled={!isValid}
+          className={`w-full mt-4 py-3 rounded-xl font-semibold shadow-lg transition
+        ${
+          !isValid
+            ? "bg-gray-400 cursor-not-allowed opacity-60"
+            : "bg-blue-600 hover:bg-blue-700 text-white"
+        }`}
         >
           Enviar
         </button>
 
-        {submitted && (
-          <p className="text-green-600 font-medium text-center mt-4 cursor-pointer">
-            Formulario enviado correctamente 🎉
-          </p>
+        {isSubmitSuccessful && (
+          <div className="mt-6 flex justify-center">
+            <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-6 py-4 rounded-2xl shadow-lg flex items-center gap-3 animate-fade-in">
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+              <span className="font-semibold tracking-wide">
+                ¡Formulario enviado correctamente!
+              </span>
+            </div>
+          </div>
         )}
       </form>
     </div>
