@@ -7,6 +7,8 @@ Este panel consume la API del backend Java, la cual está poblada con informaci�
 
 ---
 
+[Binance Trading Frontend Panel](https://github.com/santi-cortes/binance-frontend/blob/main/app_cover.png)
+
 ## 📌 Descripción del proyecto
 
 Este es un panel frontend ligero hecho con **Vite + React**, diseñado para conectarse al backend en Java que expone datos reales del order book de Binance (TURBO/USDT).
