@@ -7,7 +7,7 @@ Este panel consume la API del backend Java, la cual está poblada con informaci�
 
 ---
 
-[Binance Trading Frontend Panel](https://github.com/santi-cortes/binance-frontend/blob/main/app_cover.png)
+![Binance Trading Frontend Panel](https://github.com/santi-cortes/binance-frontend/blob/main/app_cover.png)
 
 ## 📌 Descripción del proyecto
 
