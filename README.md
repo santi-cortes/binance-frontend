@@ -1,155 +1,122 @@
-# 📌 Proyecto: Crypto Dashboard — React + TypeScript + Tailwind + Lightweight Charts
+# Binance Trading Frontend Panel
 
-Este proyecto es una **prueba técnica** que consiste en un panel simple para visualizar información de criptomonedas, incluyendo:
+### 🔗 Backend (Java + Spring Boot)
 
-- Listado de criptos
-- Detalle individual
-- Gráfica de velas (Lightweight Charts)
-- Formularios con validación en tiempo real
-- Navegación con React Router
-- API mock o real para obtener datos
+Este panel consume la API del backend Java, la cual está poblada con información real del order book de Binance:
+➡️ **https://github.com/santi-cortes/binance-backend-java.git**
 
 ---
 
-## 🚀 Tecnologías utilizadas
+## 📌 Descripción del proyecto
 
-- React 18
-- TypeScript
-- React Router v6
-- TailwindCSS
-- Lightweight Charts
-- Fetch API
-- Vite
+Este es un panel frontend ligero hecho con **Vite + React**, diseñado para conectarse al backend en Java que expone datos reales del order book de Binance (TURBO/USDT).
+
+El panel muestra precios, spreads, presión de mercado y otros indicadores relevantes en tiempo real.
 
 ---
 
-## 📂 Estructura del proyecto
+## 🚀 Instrucciones para ejecutar este frontend utilizando SOLO la imagen Docker
 
-```
+Asegúrate de que tu backend (Java) ya esté corriendo y exponga su API —por ejemplo:
+
+`bash
+http://localhost:8080/api/depth
+`
+
+### 1. Construir la imagen Docker
+
+Desde la raíz del proyecto:
+
+`bash
+docker build -t binance-frontend .
+`
+
+### 2. Ejecutar la imagen Docker
+
+`bash
+docker run -d -p 5173:80 --name binance-frontend binance-frontend
+`
+
+El panel estará disponible en:
+
+➡️ **http://localhost:5173**
+
+---
+
+## 🧩 Variables de entorno (si necesitas cambiar el backend)
+
+Puedes definir la URL del backend al construir tu imagen:
+
+`bash
+docker build --build-arg VITE_BACKEND_URL="http://host.docker.internal:8080" -t binance-frontend .
+`
+
+O al ejecutar:
+
+`bash
+docker run -d -p 5173:80 -e VITE_BACKEND_URL="http://localhost:8080" binance-frontend
+`
+
+---
+
+## 📦 Estructura del proyecto
+
+`text
 src/
- ├─ api/
- │   └─ cryptoApi.ts
- ├─ components/
- │   ├─ Header.tsx
- │   ├─ Formulario.tsx
- ├─ pages/
- │   ├─ CryptoList.tsx
- │   └─ CryptoDetail.tsx
- ├─ types/
- │   └─ index.ts
- ├─ App.tsx
- ├─ main.tsx
- └─ styles.css
-```
+ ├─ components/        # Componentes UI
+ ├─ pages/             # Vistas principales
+ ├─ services/          # Conexión al backend
+ ├─ hooks/             # Custom hooks
+ └─ utils/             # Utilidades varias
+`
 
 ---
 
-## 🧩 Funcionalidades principales
+## 🛠 Scripts principales
 
-### 1. Listado de criptomonedas
+Desarrollo:
 
-- Tabla con datos principales.
-- Navegación al detalle.
-
-### 2. Vista de detalle
-
-Incluye:
-
-- Información completa del kline.
-- Gráfica de velas (Lightweight Charts).
-- Botón para volver al listado.
-- Diseño con TailwindCSS.
-
-### 3. Formulario con validación
-
-- Validación en `onBlur`.
-- Botón deshabilitado si hay errores.
-- Reset con un clic.
-- Tipado estricto.
-
-### 4. API
-
-- Obtiene datos desde backend o mock.
-- Manejo de errores y loading.
-
----
-
-## ⚙️ Instalación
-
-```bash
-npm install
-```
-
----
-
-## ▶️ Ejecución del proyecto
-
-```bash
+`bash
 npm run dev
-```
+`
+
+Build:
+
+`bash
+npm run build
+`
+
+Previsualización:
+
+`bash
+npm run preview
+`
 
 ---
 
-## 🧪 Scripts disponibles
+## 🐳 Archivo Dockerfile utilizado
 
-| Comando         | Descripción         |
-| --------------- | ------------------- |
-| npm run dev     | Desarrollo local    |
-| npm run build   | Build de producción |
-| npm run preview | Previsualizar build |
+``dockerfile
 
----
+# 1. Build del frontend
 
-## 📈 Gráfica (Lightweight Charts)
+FROM node:18 AS builder
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm install
+COPY . .
+RUN npm run build
 
-La gráfica utiliza:
+# 2. Servir con nginx
 
-- Serie de velas
-- Auto ajuste del viewport
-- Colores personalizados
-- Transformación desde CryptoData
-
----
-
-## 📘 Tipos utilizados
-
-```ts
-export interface CryptoData {
-  id: number;
-  openTime: number;
-  open: number;
-  high: number;
-  low: number;
-  close: number;
-  volume: number;
-  closeTime: number;
-  quoteAssetVolume: number;
-  numTrades: number;
-  takerBuyBaseVolume: number;
-  takerBuyQuoteVolume: number;
-  ignore: number;
-}
-```
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+``
 
 ---
 
-## 🎨 Diseño
+## 📞 Soporte
 
-- Minimalista
-- Espaciado amplio
-- Sombras suaves
-- Bordes redondeados XXL
-- Backdrop blur
-- Paleta moderna
-
----
-
-## 🏁 Conclusión
-
-Este proyecto demuestra:
-
-- Dominio de React + TypeScript
-- Buen manejo de estado y validación
-- Integración de librerías externas
-- Arquitectura clara
-- Estilo moderno con Tailwind
+Cualquier duda, puedes preguntar sin problema.
