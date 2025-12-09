@@ -1,2 +1,2 @@
-import { Formulario } from "../components/Formulario";
+import { Formulario } from "../components/Form";
 export const FormPage = () => <Formulario />;

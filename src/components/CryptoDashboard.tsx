@@ -55,20 +55,47 @@ export const CryptoDashboard = () => {
           />
         </div>
 
-        <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col">
-          <h2 className="text-xl font-bold mb-4">🌐 Otras Cryptos</h2>
+        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 flex flex-col">
+          <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+            🌐 Otras Cryptos
+            <span className="px-2 py-0.5 text-xs bg-blue-100 text-blue-600 rounded-full">
+              {filtered.length}
+            </span>
+          </h2>
 
-          <div className="space-y-4 overflow-y-auto max-h-[400px] pr-2 scrollbar-thin scrollbar-thumb-gray-300">
+          <div className="space-y-3 overflow-y-auto max-h-[400px] pr-2 scrollbar-thin scrollbar-thumb-gray-300">
             {filtered.map((c) => (
               <Link
                 key={c.id}
                 to={`/detail/${c.symbol}`}
-                className="block p-4 rounded-xl border shadow-sm hover:shadow-md transition"
+                className="
+          group flex items-center justify-between 
+          p-4 rounded-xl border border-gray-200 bg-white/60 
+          backdrop-blur transition-all duration-200
+          hover:bg-blue-50 hover:border-blue-300 hover:shadow-md
+          active:scale-[0.98]
+        "
               >
-                <p className="font-semibold text-lg">{c.symbol}</p>
-                <p className="text-sm text-gray-500">
-                  {c.numRecords} registros
-                </p>
+                <div>
+                  <p className="font-semibold text-lg text-gray-800 group-hover:text-blue-700 transition">
+                    {c.symbol}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {c.numRecords} registros
+                  </p>
+                </div>
+
+                <div
+                  className="
+          w-10 h-10 flex items-center justify-center 
+          rounded-xl bg-gray-100 group-hover:bg-blue-200 
+          transition-colors
+        "
+                >
+                  <span className="text-gray-500 group-hover:text-blue-700 text-lg">
+                    →
+                  </span>
+                </div>
               </Link>
             ))}
           </div>

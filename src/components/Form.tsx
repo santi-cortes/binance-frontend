@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form";
 import type { FormValues } from "../types";
+import { useUser } from "../context/userContext";
 
 export const Formulario = () => {
   const {
@@ -18,8 +19,11 @@ export const Formulario = () => {
     },
   });
 
+  const { setName } = useUser();
+
   const onSubmit = (data: FormValues) => {
     console.log("Formulario enviado:", data);
+    setName(data.name);
     reset();
   };
 

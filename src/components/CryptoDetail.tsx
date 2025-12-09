@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { fetchCryptoBySymbol } from "../api/cryptoApi";
 import type { CryptoData } from "../types";
 import { useCandleChart } from "../hooks/useCandleChart";
+import { Stat } from "./Stat";
 
 export const CryptoDetail = () => {
   const { symbol } = useParams();
@@ -74,10 +75,3 @@ export const CryptoDetail = () => {
     </div>
   );
 };
-
-const Stat = ({ label, value }: { label: string; value: any }) => (
-  <div className="p-4 border rounded-xl bg-white shadow-sm">
-    <p className="text-xs text-gray-500">{label}</p>
-    <p className="text-lg font-semibold">{value ?? "—"}</p>
-  </div>
-);
