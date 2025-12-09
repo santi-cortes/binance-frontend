@@ -7,6 +7,7 @@ export const useCandleChart = (btcData: CryptoData[]) => {
 
   useEffect(() => {
     if (!containerRef.current || btcData.length === 0) return;
+    if (containerRef.current.childNodes.length > 0) return;
 
     const chart = createChart(containerRef.current, {
       width: containerRef.current.clientWidth,
